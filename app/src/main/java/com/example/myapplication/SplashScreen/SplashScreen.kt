@@ -58,7 +58,7 @@ fun SplashScreen(navController: NavHostController) {
                 .padding(20.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon),
+                painter = painterResource(id = R.drawable.splashh),
                 contentDescription = "Logo",
                 modifier = androidx.compose.ui.Modifier.scale(scale.value)
             )

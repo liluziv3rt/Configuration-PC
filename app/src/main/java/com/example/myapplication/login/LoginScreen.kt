@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +69,7 @@ fun LoginScreen(navController: NavHostController, supabaseViewModel: SupabaseAut
         TextField(
             value = passwordState.value,
             onValueChange = {passwordState.value = it},
+            visualTransformation = PasswordVisualTransformation(),
             label = { Text("Введите пароль") })
 
         Spacer(modifier = Modifier.height(10.dp))

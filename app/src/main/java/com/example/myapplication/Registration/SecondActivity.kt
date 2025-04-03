@@ -29,6 +29,7 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.example.mangaproj.presentation.viewmodels.SupabaseAuthViewModel
 import com.example.myapplication.Registration.RegistrationViewModel
+import com.example.myapplication.Registration.isEmailValid
 import com.example.myapplication.data.State.ResultState
 
 @Composable
@@ -65,40 +66,62 @@ fun SecondActivity(navController: NavHostController,  RegistrationViewModel: Reg
         Text(
             text = "Введите имя")
         TextField(
-            value = Name.value,
-            onValueChange =  {Name.value = it},
+            value = uiState.name,
+            onValueChange = { newName ->
+                RegistrationViewModel.updateState(
+                    uiState.copy(name = newName)
+                )
+            },
             label = { Text("Введите имя") })
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = "Введите фамилию")
         TextField(
-            value = Surname.value,
-            onValueChange =  {Surname.value = it},
+            value = uiState.surname,
+            onValueChange = { newSurname ->
+                RegistrationViewModel.updateState(
+                    uiState.copy(surname = newSurname)
+                )
+            },
             label = { Text("Введите фамилию") })
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = "Введите почту")
-        androidx.compose.material3.TextField(
-            value = Email.value,
-            isError = !uiState.isEmailError,
-            onValueChange =  {Email.value = it},
+            androidx.compose.material3.TextField(
+            value = uiState.email,  // Используем email из состояния ViewModel
+            onValueChange = { newEmail ->
+                RegistrationViewModel.updateState(
+                    uiState.copy(
+                        email = newEmail,
+                        isEmailError = !newEmail.trim().isEmailValid()
+                    )
+                )
+            },
+
             label = { Text("Введите почту") })
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(text = "Пароль")
         TextField(
-            value = Password.value,
-            onValueChange = {Password.value = it},
+            value = uiState.password,
+            onValueChange = { newPassword ->
+                RegistrationViewModel.updateState(
+                    uiState.copy(password = newPassword)
+                )
+            },
             label = { Text("Введите пароль") })
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "Подтвердите пароль")
         TextField(
-            value = confirmPassword.value,
-            onValueChange = {confirmPassword.value = it},
+            value = uiState.confirmPassword,
+            onValueChange = { newconfirmPassword->
+                RegistrationViewModel.updateState(
+                    uiState.copy(confirmPassword = newconfirmPassword)
+                )
+            },
             label = { Text("Подтвердите пароль") })
 
         Spacer(modifier = Modifier.height(10.dp))
