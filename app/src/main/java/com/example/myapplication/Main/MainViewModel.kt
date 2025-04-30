@@ -2,6 +2,7 @@ package com.example.myapplication.Main
 
 import android.app.DownloadManager.Query
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.data.Const.Constant.supabase
 import com.example.myapplication.data.Models.Elements
 import com.example.myapplication.data.Models.Types
+import com.example.myapplication.data.State.FilterState
 import com.example.myapplication.data.State.ResultState
 import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.postgrest.postgrest
@@ -22,7 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainViewModel: ViewModel() {
+class MainViewModel(): ViewModel() {
 
     private val _screenState = MutableStateFlow<ResultState>(ResultState.Loading)
     val screenState: StateFlow<ResultState> = _screenState.asStateFlow()
@@ -35,11 +37,28 @@ class MainViewModel: ViewModel() {
 
     private var allElements: List<Elements> = listOf()
 
+    private var _filtElem = MutableLiveData<List<Elements>>()
+    val filtElem: LiveData<List<Elements>> get() = _filtElem
+
+    private var _filtType: MutableList<Int> = mutableListOf()
+    val filtType: List<Int> get() = _filtType
+
     init{
+        refresh()
+    }
+
+    fun refresh(){
         loadELements()
         loadTypes()
     }
 
+    private var filterState = mutableStateOf(FilterState())
+
+    fun RememberFiltState(textSearch:String){
+        filterState.value = filterState.value.copy(textSearch = textSearch, types = _filtType)
+    }
+
+    // Функция для загрузки элементов из базы данных
     private fun loadELements(){
         _screenState.value = ResultState.Loading
         viewModelScope.launch {
@@ -52,6 +71,7 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    // Функция для загрузки категорий из базы данных
     private fun loadTypes(){
         viewModelScope.launch {
             try {
@@ -60,6 +80,7 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    // Функция для получения URL изображения товара
     suspend fun getUrlImage(elementName: String): String {
         return withContext(Dispatchers.IO) {
             try {
@@ -73,12 +94,25 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun filterList(query: String?, idType: Int?){
-        val filteredElements = allElements.filter { element ->
-            val matchesTitle = query.isNullOrEmpty() || element.name.contains(query, ignoreCase = true) || element.desc.contains(query, ignoreCase = true)
-            val matchesTypes = idType == -1 || element.typeId == idType
-            matchesTitle && matchesTypes
+    fun filtElem(filtString:String){
+        if(_filtType.isNotEmpty()){
+            var filtered = allElements.filter { x -> x.name.contains(filtString) || x.desc.contains(filtString) }
+            filtered = filtered.filter { x -> _filtType.contains(x.typeId)}
+            _elements.value = filtered ?: emptyList()
         }
-        _elements.value = filteredElements
+        else{
+            val filtered = allElements.filter { x -> x.name.contains(filtString) || x.desc.contains(filtString) }
+            _elements.value = filtered ?: emptyList()
+        }
     }
+
+    fun toggleType(typeId: Int, textSearch: String) {
+        if (_filtType.contains(typeId)) {
+            _filtType.remove(typeId)
+        } else {
+            _filtType.add(typeId)
+        }
+        filtElem(textSearch)
+    }
+
 }
