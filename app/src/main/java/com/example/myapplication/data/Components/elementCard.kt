@@ -35,7 +35,7 @@ import com.example.myapplication.R
 import com.example.myapplication.data.Models.Elements
 
 @Composable
-fun elementCard(element: Elements){
+fun elementCard(element: Elements, controlNav: NavHostController){
 
     Card(modifier = Modifier
         .padding(16.dp)
@@ -103,6 +103,17 @@ fun elementCard(element: Elements){
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
+                }
+                Row(){
+                    Button(onClick = {
+                        controlNav.navigate("cartage")
+                    }) {
+                        Text(
+                            text = "Подробнее",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
                 }
             }
         }

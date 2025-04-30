@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.data.Components.TypeButtons
 import com.example.myapplication.data.Components.elementCard
@@ -55,7 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun MainScreen(controlNav: NavController, viewModelMainScreen: MainViewModel = viewModel{ MainViewModel() }
+fun MainScreen(controlNav: NavHostController, viewModelMainScreen: MainViewModel = viewModel{ MainViewModel() }
 ) {
     val textSearch = remember { mutableStateOf("") }
     val actualState by viewModelMainScreen.screenState.collectAsState()
@@ -105,7 +106,7 @@ fun MainScreen(controlNav: NavController, viewModelMainScreen: MainViewModel = v
 
                 LazyColumn {
                     items(element.value.size) { index ->
-                        elementCard(element.value[index])
+                        elementCard(element.value[index], controlNav)
                     }
                 }
             }

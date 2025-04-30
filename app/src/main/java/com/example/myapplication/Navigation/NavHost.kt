@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.myapplication.SplashScreen.SplashScreen
 import com.example.myapplication.login.LoginScreen
 import com.example.myapplication.Main.MainScreen
+import com.example.myapplication.data.Cartage.CartageScreen
 
 @Composable
 fun NavHost()
@@ -31,6 +32,10 @@ fun NavHost()
         composable("registration")
         {
             SecondActivity(navController)
+        }
+        composable("cartage"){backStackEntry ->
+        val elemId = backStackEntry.arguments?.getString("elemId")?.toIntOrNull() ?: 0
+            CartageScreen(controlNav = navController, id = elemId)
         }
     }
 
